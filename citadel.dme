@@ -1007,6 +1007,7 @@
 #include "code\game\machinery\colormate.dm"
 #include "code\game\machinery\cryo.dm"
 #include "code\game\machinery\cryopod.dm"
+#include "code\game\machinery\defibrillator_mount.dm"
 #include "code\game\machinery\deployable.dm"
 #include "code\game\machinery\deployable_vr.dm"
 #include "code\game\machinery\door_control.dm"
