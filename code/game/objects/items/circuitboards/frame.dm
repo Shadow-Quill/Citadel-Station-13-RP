@@ -291,3 +291,18 @@
 		/obj/item/stock_parts/micro_laser/high = 2, //field emitters
 		/obj/item/stock_parts/scanning_module = 1,  //atmosphere sensor
 	)
+
+/obj/item/circuitboard/defib_mount
+	name = T_BOARD("defibrillator mount")
+	build_path = /obj/machinery/defibrillator_mount
+	board_type = new /datum/frame/frame_types/defib_mount
+	matter = list(MAT_STEEL = 50, MAT_GLASS = 50)
+
+/obj/item/circuitboard/defib_mount/charging
+	name = T_BOARD("PENLIGHT defibrillator mount")
+	build_path = /obj/machinery/defibrillator_mount/charging
+	board_type = new /datum/frame/frame_types/defib_mount/charging
+	matter = list(MAT_STEEL = 50, MAT_GLASS = 50, MAT_SILVER = 50)
+	req_components = list(
+		/obj/item/stack/cable_coil = 5,
+		/obj/item/stock_parts/capacitor = 1)

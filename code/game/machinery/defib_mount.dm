@@ -15,7 +15,7 @@
 /// if true, and a defib is loaded, it can't be removed without unlocking the clamps
 	var/clamps_locked = FALSE
 /// the type of wallframe it 'disassembles' into
-	var/wallframe_type = /obj/item/wallframe/defib_mount
+	var/wallframe_type = /obj/item/circuitboard/defib_mount
 
 MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/defibrillator_mount, 28)
 
@@ -51,6 +51,9 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/defibrillator_mount/loaded, 28)
 	if(defib.paddles)
 		. += (defib.paddles.safety ? "online" : "emagged")
 
+		if(defib.paddles.loc == defib)
+			. += "paddles"
+
 	if(defib.bcell)
 		var/obj/item/cell/C = get_cell()
 		var/ratio = C.charge / C.maxcharge
@@ -84,7 +87,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/defibrillator_mount/loaded, 28)
 			to_chat(user, SPAN_WARNING("There's already a defibrillator in [src]!"))
 			return
 		var/obj/item/defib_kit/D = I
-		if(!D.get_cell())
+		if(!D.bcell)
 			to_chat(user, SPAN_WARNING("Only defibrilators containing a cell can be hooked up to [src]!"))
 			return
 		if(HAS_TRAIT(I, TRAIT_ITEM_NODROP) || !user.transfer_item_to_loc(I, src))
@@ -100,7 +103,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/defibrillator_mount/loaded, 28)
 		return
 
 	else if(defib && I == defib.paddles)
-		defib.paddles.reattach_paddles()
+		defib.reattach_paddles(user)
 		return
 
 	var/obj/item/card/id = I.GetID()
@@ -144,8 +147,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/defibrillator_mount/loaded, 28)
 /obj/machinery/defibrillator_mount/wrench_act(mob/living/user, obj/item/I)
 	if(!wallframe_type)
 		return ..()
-	if(user.combat_mode)
-		return ..()
+
 	if(defib)
 		user.action_feedback(SPAN_WARNING("The mount can't be deconstructed while a defibrillator unit is loaded!"))
 		..()
@@ -187,8 +189,8 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/defibrillator_mount/loaded, 28)
 	name = "PENLITE defibrillator mount"
 	desc = "Holds defibrillators. You can grab the paddles if one is mounted. This PENLITE variant also allows for slow recharging of the defibrillator."
 	icon_state = "penlite_mount"
-	use_power = IDLE_POWER_USE
-	wallframe_type = /obj/item/wallframe/defib_mount/charging
+	use_power = USE_POWER_IDLE
+	wallframe_type = /obj/item/circuitboard/defib_mount/charging
 
 
 /obj/machinery/defibrillator_mount/charging/Initialize(mapload)
@@ -202,22 +204,23 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/defibrillator_mount/loaded, 28)
 	if(C.charge < C.maxcharge)
 		use_power(active_power_usage * delta_time)
 		C.give(40 * delta_time)
-		defib.update_power()
+		defib.update_icon()
+		update_overlays()
 
-//wallframe, for attaching the mounts easily
-/obj/item/wallframe/defib_mount
-	name = "unhooked defibrillator mount"
-	desc = "A frame for a defibrillator mount. Once placed, it can be removed with a wrench."
-	icon = 'icons/obj/machines/defib_mount.dmi'
-	icon_state = "defibrillator_mount"
-	custom_materials = list(/datum/material/iron = 300, /datum/material/glass = 100)
-	w_class = WEIGHT_CLASS_BULKY
-	result_path = /obj/machinery/defibrillator_mount
-	pixel_shift = 28
+// //wallframe, for attaching the mounts easily
+// /obj/item/wallframe/defib_mount
+// 	name = "unhooked defibrillator mount"
+// 	desc = "A frame for a defibrillator mount. Once placed, it can be removed with a wrench."
+// 	icon = 'icons/obj/machines/defib_mount.dmi'
+// 	icon_state = "defibrillator_mount"
+// 	custom_materials = list(/datum/material/iron = 300, /datum/material/glass = 100)
+// 	w_class = WEIGHT_CLASS_BULKY
+// 	result_path = /obj/machinery/defibrillator_mount
+// 	pixel_shift = 28
 
-/obj/item/wallframe/defib_mount/charging
-	name = "unhooked PENLITE defibrillator mount"
-	desc = "A frame for a PENLITE defibrillator mount. Unlike the normal mount, it can passively recharge the unit inside."
-	icon_state = "penlite_mount"
-	custom_materials = list(/datum/material/iron = 300, /datum/material/glass = 100, /datum/material/silver = 50)
-	result_path = /obj/machinery/defibrillator_mount/charging
+// /obj/item/wallframe/defib_mount/charging
+// 	name = "unhooked PENLITE defibrillator mount"
+// 	desc = "A frame for a PENLITE defibrillator mount. Unlike the normal mount, it can passively recharge the unit inside."
+// 	icon_state = "penlite_mount"
+// 	custom_materials = list(/datum/material/iron = 300, /datum/material/glass = 100, /datum/material/silver = 50)
+// 	result_path = /obj/machinery/defibrillator_mount/charging

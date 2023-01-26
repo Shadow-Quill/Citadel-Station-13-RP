@@ -209,6 +209,20 @@
 	frame_class = FRAME_CLASS_MACHINE
 	frame_size = 3
 
+/datum/frame/frame_types/defib_mount
+	name = "defibrillator mount"
+	icon_override = 'icons/obj/machines/defib_mount.dmi'
+	frame_class = FRAME_CLASS_ALARM
+	frame_size = 3
+	frame_style = FRAME_STYLE_WALL
+	circuit = /obj/item/circuitboard/defib_mount
+	x_offset = 28
+	y_offset = 28
+
+/datum/frame/frame_types/defib_mount/charging
+	name = "PENLITE defibrillator mount"
+	circuit = /obj/item/circuitboard/defib_mount/charging
+
 //////////////////////////////
 // Frame Object (Structure)
 //////////////////////////////
